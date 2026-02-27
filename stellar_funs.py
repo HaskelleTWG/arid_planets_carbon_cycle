@@ -1,0 +1,59 @@
+import numpy as np
+from scipy.interpolate import interp1d
+
+## Shouldn't need to touch this
+
+## we want a function that takes as input stellar type (preferably mass), a time array, and various tsat parameters for XUV and FUV decay
+## should return total luminosity, FUV, and XUV as a function of time
+## could return as absolute fluxes AND as relative to modern Earth flux
+## idea is to run this as a one-off so only to read/write once.
+
+def main_sun_fun(time,stellar_mass,tsat_XUV,beta_XUV,fsat):
+    
+    if stellar_mass == 1.0: 
+        stellar_data = np.loadtxt('Baraffe3.txt',skiprows=31) # for reproducing sun exactly
+    else:
+        #stellar_data = np.loadtxt('Baraffe1.txt',skiprows=31) # forlow mass, old Baraffe
+        stellar_data = np.loadtxt('Baraffe2015.txt',skiprows=31) # forlow mass, new and improved, MODIFIED FOR TIME
+    
+    stellar_array=[]
+    for i in range(0,len(stellar_data[:,0])):
+        if stellar_data[i,0] == stellar_mass:
+            stellar_array.append(stellar_data[i,:])
+            
+    stellar_array=np.array(stellar_array)
+
+    if stellar_mass == 1.0: 
+        stellar_array[:,1] =  stellar_array[:,1]
+        Total_Lum = (10**stellar_array[:,4]) 
+    else:
+        stellar_array[:,1] =  (10**stellar_array[:,1])/1e9 #MODIFIED TIME LOG YRS TO GYRS  
+        Total_Lum = (10**stellar_array[:,3]) #MODIFIED TIME LOG YRS TO GYRS 
+
+    min_time = np.min(stellar_array[:,1])
+    max_time = np.max(stellar_array[:,1])
+    
+    if (min_time>np.min(time) ) or (max_time<np.max(time)):
+        print ("Problem: exceeding time range for stellar data")   
+    
+    time_array = stellar_array[:,1]
+    
+    
+    ratio_out = [] # For XUV ratio
+    for i in range(0,len(time_array)):
+        if time_array[i]<tsat_XUV:
+            ratio= fsat
+        else:
+            ratio = fsat*(time_array[i]/tsat_XUV)**beta_XUV  
+        ratio_out.append(ratio)
+  
+    XUV_Lum = ratio_out*Total_Lum
+    
+    Total_fun = interp1d(time_array,Total_Lum)
+    XUV_fun = interp1d(time_array,XUV_Lum)
+    Relative_total_Lum = Total_fun(time)
+    Relative_XUV_lum = XUV_fun(time)
+    Absolute_total_Lum = Relative_total_Lum*3.828e26 
+    Absolute_XUV_Lum = Relative_XUV_lum*3.828e26
+    
+    return [Relative_total_Lum,Relative_XUV_lum,Absolute_total_Lum,Absolute_XUV_Lum ]
