@@ -72,7 +72,7 @@ This script uses saved .csv files from Nominal_Plot.py to create Figure 4 in the
 
 
 %% Other files included in the code:
-- VolcGases-master is the outgassing moduls required to run outgassing_module_fast.py
+- other_functions contains miscellaneous functions for calculating various interior parameters, such as melt fraction and mantle solidus.  
 - options_array.npy is an array created by the code for storing user choices about parallelization, iteration number, and carbon cycle parameters. 
 
 END EXPLANATION OF CODE STRUCTURE
