@@ -41,6 +41,9 @@ This script contains the following functions which, taken together, define and s
 
 % land_fraction - Calculates continental land fraction using a hypsometric curve for Earth or Venus. Calls Hypso_fun.py to calculate how much of the planet would be submerged by that volume of water.
 
+%% planetary_carbon_forward_NominalPlot.py
+This script includes a 'forward_model' with nominal values used in single model runs. It is nearly identical to planetary_carbon_forward_MC.py but uses single values instead of ranges. NominalPlot.py plots the outputs for four different initial water inventories. 
+
 %% carbon_cycle_model - Contains all tested weathering paramterizations described in Section 2.2 of the manuscript. Users can choose which paramterization to use in the forward_model. 'weathering_flux' is the WHAK model, 'MAC_weathering_flux' is the MAC model, and 'MAC_LH_wx_flux' is our MAC formulation that includes wind-driven evaporation (Section 2.2.3). 'MAC_LH_wx_flux' should be used with planetary_carbon_forward_NominalPlot.py, and 'MAC_LH_wx_flux_MC" should be used with planetary_carbon_forward_MC.py.  
 
 %% escape_functions.py
